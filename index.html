@@ -3,32 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <title>🏖️ Pool Stats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom right, #cceeff, #ffffff);
       text-align: center;
-      padding: 50px;
+      padding: 40px 20px;
       color: #333;
     }
 
     h1 {
-      font-size: 3em;
-      margin-bottom: 0.2em;
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
     }
 
     .card {
       background: #fff;
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 30px;
+      padding: 30px 20px;
       margin: 20px auto;
       max-width: 400px;
     }
 
     .stat {
-      font-size: 1.5em;
+      font-size: 1.4em;
       margin: 15px 0;
+    }
+
+    .thermometer {
+      margin: 20px auto;
+      width: 80px;
     }
 
     .footer {
@@ -36,10 +42,26 @@
       font-size: 0.9em;
       color: #666;
     }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      .stat {
+        font-size: 1.2em;
+      }
+
+      .card {
+        padding: 20px 15px;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>🌊 Pool Status</h1>
+
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Thermometer_icon.svg/512px-Thermometer_icon.svg.png" alt="Thermometer" class="thermometer">
 
   <div class="card">
     <div class="stat">🌡️ Temperature: <strong>28°C</strong></div>
