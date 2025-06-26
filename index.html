@@ -1,11 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Pool Temperature</title>
+  <meta charset="UTF-8">
+  <title>🏖️ Pool Stats</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #cceeff, #ffffff);
+      text-align: center;
+      padding: 50px;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.2em;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+
+    .stat {
+      font-size: 1.5em;
+      margin: 15px 0;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <h1>🌊 Pool Temperature</h1>
-  <p>The current temperature is: <strong>28°C</strong></p>
-  <p>Updated manually by the pool boy 😎</p>
+  <h1>🌊 Pool Status</h1>
+
+  <div class="card">
+    <div class="stat">🌡️ Temperature: <strong>28°C</strong></div>
+    <div class="stat">🍺 Cold Beers: <strong>7</strong></div>
+    <div class="stat">🍷 Bottles of Wine: <strong>3</strong></div>
+  </div>
+
+  <div class="footer">
+    Updated manually by the pool boy 😎<br>
+    Refresh for the latest vibe check
+  </div>
 </body>
 </html>
