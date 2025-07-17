@@ -63,9 +63,9 @@
         if (temp !== null && !isNaN(temp)) {
           tempEl.textContent = temp.toFixed(1) + " °C";
           emojiEl.textContent =
-            temp < 15 ? "🥶" :
-            temp < 24 ? "😬" :
-            temp < 29 ? "😊" : "🥵";
+            temp < 22 ? "🥶" :
+            temp < 26 ? "😬" :
+            temp < 28 ? "😊" : "🥵";
         } else {
           tempEl.textContent = "-- °C";
           emojiEl.textContent = "❓";
