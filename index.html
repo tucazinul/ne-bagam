@@ -1,89 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Piscina</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #4fc3f7, #0288d1);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-    .container {
-      padding: 1em;
-    }
-    .temp {
-      font-size: 4rem;
-      font-weight: bold;
-    }
-    .emoji {
-      font-size: 5rem;
-      margin-top: 0.5em;
-    }
-    .status {
-      font-size: 0.9rem;
-      opacity: 0.7;
-      margin-top: 1em;
-    }
-  </style>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏊</text></svg>">
-</head>
-<body>
-  <div class="container">
-    <div class="temp" id="temp">-- °C</div>
-    <div class="emoji" id="emoji">🤔</div>
-    <div class="status" id="status">Se încarcă...</div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Piscina Temp</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0288d1" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(to bottom right, #4fc3f7, #0288d1);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .container {
+        padding: 1em;
+      }
+      .temp {
+        font-size: 4rem;
+        font-weight: bold;
+      }
+      .emoji {
+        font-size: 5rem;
+        margin-top: 0.5em;
+      }
+      .status {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        margin-top: 1em;
+      }
+    </style>
+    <link rel="icon" href="icon.png" type="image/png" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="temp" id="temp">-- °C</div>
+      <div class="emoji" id="emoji">🤔</div>
+      <div class="status" id="status">Se încarcă...</div>
+    </div>
 
-  <script>
-    const tempEl = document.getElementById("temp");
-    const emojiEl = document.getElementById("emoji");
-    const statusEl = document.getElementById("status");
+    <script>
+      const tempEl = document.getElementById("temp");
+      const emojiEl = document.getElementById("emoji");
+      const statusEl = document.getElementById("status");
 
-    async function fetchTemp() {
-      const url = "https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/temperature.json";
-
-      console.log("🔄 Fetching temperature...");
-
-      try {
-        const response = await fetch(url);
-        console.log("✅ Response status:", response.status);
-
-        const temp = (await response.json()).value;
-        console.log("🌡️ Temp value from Firebase:", temp);
-
-        if (temp !== null && !isNaN(temp)) {
-          tempEl.textContent = temp.toFixed(1) + " °C";
-          emojiEl.textContent =
-            temp < 22 ? "🥶" :
-            temp < 26 ? "😬" :
-            temp < 28 ? "😊" : "🥵";
-        } else {
-          tempEl.textContent = "-- °C";
-          emojiEl.textContent = "❓";
-          console.warn("⚠️ Invalid temperature value received:", temp);
-        }
+      function updateDisplay(temp, source = "online") {
+        tempEl.textContent = temp.toFixed(1) + " °C";
+        emojiEl.textContent =
+          temp < 22 ? "🥶" : temp < 24 ? "😬" : temp < 28 ? "😊" : "🥵";
 
         const now = new Date();
-        statusEl.textContent = "Ultima actualizare: " + now.toLocaleTimeString();
-      } catch (error) {
-        console.error("❌ Error fetching temperature:", error);
-        tempEl.textContent = "-- °C";
-        emojiEl.textContent = "⚠️";
-        statusEl.textContent = "Eroare la conectare.";
+        statusEl.textContent = `${
+          source === "offline" ? "⚠️ Offline • " : ""
+        }Ultima actualizare: ${now.toLocaleTimeString()}`;
       }
-    }
 
-    fetchTemp();
-    setInterval(fetchTemp, 10000);
-  </script>
-</body>
+      async function fetchTemp() {
+        const url =
+          "https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/temperature.json";
+
+        try {
+          const response = await fetch(url);
+          const temp = await response.json();
+
+          if (temp !== null && !isNaN(temp)) {
+            localStorage.setItem("lastTemp", temp);
+            updateDisplay(temp, "online");
+          } else {
+            throw new Error("Invalid temp");
+          }
+        } catch (error) {
+          const cached = localStorage.getItem("lastTemp");
+          if (cached !== null && !isNaN(cached)) {
+            updateDisplay(parseFloat(cached), "offline");
+          } else {
+            tempEl.textContent = "-- °C";
+            emojiEl.textContent = "⚠️";
+            statusEl.textContent = "Fără conexiune și fără cache.";
+          }
+        }
+      }
+
+      fetchTemp();
+      setInterval(fetchTemp, 10000);
+
+      // Register Service Worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then(() => {
+            console.log("✅ Service Worker registered");
+          })
+          .catch((err) => {
+            console.warn("❌ Service Worker error:", err);
+          });
+      }
+    </script>
+  </body>
 </html>
