@@ -37,6 +37,20 @@
         opacity: 0.7;
         margin-top: 1em;
       }
+      #refreshBtn {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid white;
+      color: white;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
     </style>
     <link rel="icon" href="icon.png" type="image/png" />
   </head>
@@ -45,6 +59,7 @@
       <div class="temp" id="temp">-- °C</div>
       <div class="emoji" id="emoji">🤔</div>
       <div class="status" id="status">Se încarcă...</div>
+      <button id="refreshBtn">Refresh 🔄</button>
     </div>
 
     <script>
@@ -91,6 +106,18 @@
 
       fetchTemp();
       setInterval(fetchTemp, 60000);
+
+   // Manual refresh
+    refreshBtn.addEventListener("click", () => {
+      fetchTemp();
+    });
+
+    // Refresh when returning to tab
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        fetchTemp();
+      }
+    });
 
       // Register Service Worker
       if ("serviceWorker" in navigator) {
