@@ -55,7 +55,7 @@
       function updateDisplay(temp, source = "online") {
         tempEl.textContent = temp.toFixed(1) + " °C";
         emojiEl.textContent =
-          temp < 22 ? "🥶" : temp < 24 ? "😬" : temp < 28 ? "😊" : "🥵";
+          temp < 24 ? "🥶" : temp < 26 ? "😬" : temp < 28 ? "😊" : "🥵";
 
         const now = new Date();
         statusEl.textContent = `${
@@ -69,7 +69,7 @@
 
         try {
           const response = await fetch(url);
-          const temp = await response.json();
+          const temp = (await response.json()).value;
 
           if (temp !== null && !isNaN(temp)) {
             localStorage.setItem("lastTemp", temp);
