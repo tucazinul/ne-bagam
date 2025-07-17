@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Piscina Live</title>
+  <title>Piscina</title>
   <style>
     html, body {
       margin: 0;
@@ -28,10 +28,6 @@
       font-size: 5rem;
       margin-top: 0.5em;
     }
-    .info {
-      margin-top: 1em;
-      font-size: 1.5rem;
-    }
     .status {
       font-size: 0.9rem;
       opacity: 0.7;
@@ -44,33 +40,25 @@
   <div class="container">
     <div class="temp" id="temp">-- °C</div>
     <div class="emoji" id="emoji">🤔</div>
-    <div class="info">
-      🍺 Bere: <span id="beer">--</span><br/>
-      🍷 Vin: <span id="wine">--</span>
-    </div>
-    <div class="status" id="status">Ultima actualizare...</div>
+    <div class="status" id="status">Se încarcă...</div>
   </div>
 
   <script>
     const tempEl = document.getElementById("temp");
     const emojiEl = document.getElementById("emoji");
-    const beerEl = document.getElementById("beer");
-    const wineEl = document.getElementById("wine");
     const statusEl = document.getElementById("status");
 
-    async function fetchData() {
-      try {
-        const [tempRes, beerRes, wineRes] = await Promise.all([
-          fetch("https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/temperature.json"),
-          fetch("https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/beer.json"),
-          fetch("https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/wine.json")
-        ]);
+    async function fetchTemp() {
+      const url = "https://nebagam-d21a0-default-rtdb.europe-west1.firebasedatabase.app/temperature.json";
 
-        const [temp, beer, wine] = await Promise.all([
-          tempRes.json(),
-          beerRes.json(),
-          wineRes.json()
-        ]);
+      console.log("🔄 Fetching temperature...");
+
+      try {
+        const response = await fetch(url);
+        console.log("✅ Response status:", response.status);
+
+        const temp = await response.json();
+        console.log("🌡️ Temp value from Firebase:", temp);
 
         if (temp !== null && !isNaN(temp)) {
           tempEl.textContent = temp.toFixed(1) + " °C";
@@ -81,21 +69,21 @@
         } else {
           tempEl.textContent = "-- °C";
           emojiEl.textContent = "❓";
+          console.warn("⚠️ Invalid temperature value received:", temp);
         }
-
-        beerEl.textContent = beer ?? "--";
-        wineEl.textContent = wine ?? "--";
 
         const now = new Date();
         statusEl.textContent = "Ultima actualizare: " + now.toLocaleTimeString();
-      } catch (e) {
-        console.error("Eroare la citirea datelor:", e);
+      } catch (error) {
+        console.error("❌ Error fetching temperature:", error);
+        tempEl.textContent = "-- °C";
+        emojiEl.textContent = "⚠️";
         statusEl.textContent = "Eroare la conectare.";
       }
     }
 
-    fetchData();
-    setInterval(fetchData, 10000);
+    fetchTemp();
+    setInterval(fetchTemp, 10000);
   </script>
 </body>
 </html>
