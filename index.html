@@ -1,82 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>🏖️ Pool Stats</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌡️ Pool Temp Monitor</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #cceeff, #ffffff);
+      background: linear-gradient(to bottom right, #74ebd5, #ACB6E5);
       text-align: center;
-      padding: 40px 20px;
-      color: #333;
+      padding: 3rem;
+      color: #222;
     }
-
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.5em;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
-
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 30px 20px;
-      margin: 20px auto;
-      max-width: 400px;
+    .temp {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-top: 2rem;
     }
-
-    .stat {
-      font-size: 1.4em;
-      margin: 15px 0;
-    }
-
-    .thermometer {
-      margin: 20px auto;
-      width: 80px;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 0.9em;
-      color: #666;
-    }
-
-    @media (max-width: 500px) {
-      h1 {
-        font-size: 2em;
-      }
-
-      .stat {
-        font-size: 1.2em;
-      }
-
-      .card {
-        padding: 20px 15px;
-      }
-
-      .thermometer {
-        width: 60px;
-      }
+    .time {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <h1>🌊 Pool Status</h1>
+  <h1>🏊 Pool Temperature</h1>
+  <div class="temp" id="temp">Loading...</div>
+  <div class="time" id="time">⏳ Fetching...</div>
 
-  <img src="https://cdn-icons-png.flaticon.com/512/1684/1684375.png" alt="Thermometer" class="thermometer">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  <div class="card">
-    <div class="stat">🌡️ Temperature: <strong>28°C</strong></div>
-    <div class="stat">🍺 Cold Beers: <strong>8</strong></div>
-    <div class="stat">🍷 Bottles of Wine: <strong>0</strong></div>
-  </div>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "your-project-id.firebaseapp.com",
+      databaseURL: "https://your-project-id.firebaseio.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project-id.appspot.com",
+      messagingSenderId: "your-sender-id",
+      appId: "your-app-id"
+    };
 
-  <div class="footer">
-    Updated manually by the pool boy 😎<br>
-    Refresh for the latest vibe check <br>
-    Last update: <strong>15-07-2025 15:26</strong>
-  </div>
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const tempRef = ref(db, "temperature/value");
+
+    onValue(tempRef, (snapshot) => {
+      const temp = snapshot.val();
+      document.getElementById("temp").textContent = `🌡️ ${temp.toFixed(1)} °C`;
+      document.getElementById("time").textContent = `🔁 Last updated: ${new Date().toLocaleTimeString()}`;
+    });
+  </script>
 </body>
 </html>
