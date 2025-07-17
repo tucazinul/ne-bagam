@@ -57,7 +57,7 @@
         const response = await fetch(url);
         console.log("✅ Response status:", response.status);
 
-        const temp = await response.json();
+        const temp = (await response.json()).value;
         console.log("🌡️ Temp value from Firebase:", temp);
 
         if (temp !== null && !isNaN(temp)) {
